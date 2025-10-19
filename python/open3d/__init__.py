@@ -49,11 +49,24 @@ if _build_config["BUILD_CUDA_MODULE"]:
             # To allow Windows users to use Open3D with CUDA without running into dependency-problems,
             # look for the CUDA bin directory in PATH and explicitly add it to the DLL search path.
             cuda_bin_path = None
-            for path in os.environ['PATH'].split(';'):
-                # search heuristic: look for a path containing "cuda" and "bin" in this order.
-                if re.search(r'cuda.*bin', path, re.IGNORECASE):
+            search_paths = os.environ['PATH'].split(';')
+            # Prefer CUDA toolkit directories that end with "cuda\\*\\bin".
+            cuda_component_pattern = re.compile(r"(?:^|[\\/])cuda(?:[\\/]|$)", re.IGNORECASE)
+            bin_component_pattern = re.compile(r"(?:^|[\\/])bin$", re.IGNORECASE)
+
+            for path in search_paths:
+                if (cuda_component_pattern.search(path)
+                        and bin_component_pattern.search(path)
+                        and os.path.isdir(path)):
                     cuda_bin_path = path
                     break
+
+            if not cuda_bin_path:
+                # Fallback: honor any PATH entry containing "cuda" and "bin" if it exists on disk.
+                for path in search_paths:
+                    if re.search(r'cuda.*bin', path, re.IGNORECASE) and os.path.isdir(path):
+                        cuda_bin_path = path
+                        break
 
             if cuda_bin_path:
                 os.add_dll_directory(cuda_bin_path)

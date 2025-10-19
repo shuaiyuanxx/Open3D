@@ -29,6 +29,7 @@ function(open3d_show_and_abort_on_warning target)
     if (BUILD_CUDA_MODULE)
         # General NVCC flags
         set(DISABLE_NVCC_WARNINGS
+            221            # floating-point constant overflow in stdgpu with CUDA 12.6
             2809           # ignoring return value from routine declared with "nodiscard" attribute (cub)
         )
         string(REPLACE ";" "," DISABLE_NVCC_WARNINGS "${DISABLE_NVCC_WARNINGS}")
