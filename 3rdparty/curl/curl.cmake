@@ -41,6 +41,8 @@ ExternalProject_Add(
         -DCURL_USE_LIBSSH2=OFF
         -DCURL_USE_OPENSSL=ON
         -DCURL_USE_LIBPSL=OFF
+        -DCURL_ZSTD=OFF
+        -DUSE_ZSTD=OFF
         -DOPENSSL_ROOT_DIR=${BORINGSSL_ROOT_DIR}
         ${curl_cmake_extra_args}
         ${ExternalProject_CMAKE_ARGS_hidden}
